@@ -1,0 +1,70 @@
+[size=6][b]Unofficial Patch — fixes for SpaceBourne 2's own bugs[/b][/size]
+
+SpaceBourne 2 has bugs in its AI that have nothing to do with mods: allies appear half under the floor or outside the lift and open fire, enemies come out of a lift and ignore you, squad soldiers turn and shoot in the same instant, and a few smaller ones. The Unofficial Patch fixes them. Every fix is a switch in config.lua, on by default, and each one steps aside when another mod of the realism set already fixes the same thing.
+
+[b]Links:[/b] [url=https://github.com/hubertdungen/SpaceBourne2-UnofficialPatch]GitHub[/url] · UE4SS Lua mod · works alone or with the rest of the realism set.
+[b]Install the whole realism set in one go:[/b] the [url=https://github.com/hubertdungen/SpaceBourne2-Realism]SpaceBourne 2 Realism installer[/url] ([url=https://www.nexusmods.com/spacebourne2/mods/11]Nexus[/url]).
+
+[line]
+[size=5][b]Features[/b][/size]
+
+[size=4][b]Allies and lifts[/b][/size]
+
+[list]
+[*][b]Allies line up in the lift.[/b] The game puts each ally on one of two fixed points of the lift, at floor level and without checking anything: the third one gets no point, and they stand in each other, half in the floor or outside the cabin. After a lift ride or a new dungeon floor the patch puts every ally that follows you on a spot it checked first: a clear line from you, a floor at your height under it, free of anyone else, and inside the cabin while you are in one.
+[*][b]The catch-up teleport can't bury anyone.[/b] When a squad soldier is more than 30 m away the game drops it on a random point around you without looking at walls or floor. The patch checks each soldier after that (and after any jump of yours over 15 m): one in the floor, behind a wall or outside the lift is moved to a checked spot next to you.
+[*][b]Allies that just arrived hold fire for a moment[/b] (1.5 s), so they don't shoot the instant they appear.
+[/list]
+
+[size=4][b]Enemies[/b][/size]
+
+[list]
+[*][b]Enemies out of a lift stop ignoring you.[/b] An enemy sent to a spot outside a lift walks there blind (both its eyes off) and deaf (the flag that makes every alert and every hit do nothing), and only gets its senses back once it is within 2 m of that spot. One that never gets there stays blind and deaf for good. After 3 s without getting closer (or 12 s in all, or once it is hit) the patch gives it what the game gives on arrival: eyes on, hearing back, combat behaviour started.
+[/list]
+
+[size=4][b]Squad fire[/b][/size]
+
+[list]
+[*][b]Reaction time for the squad.[/b] A squad soldier picks a target, aims and fires in one call. Now the first shot at a new target waits for a reaction time by tier (0.7 s for rookies down to 0.35 s for veterans), then the soldier fires with the game's own function.
+[*][b]No shots through you.[/b] A round of a squad soldier or companion that would pass through you before it reaches its target is removed.
+[/list]
+
+[size=4][b]Fixes taken from other mods of the set[/b][/size]
+
+Applied only while the mod that has them is off or too old; otherwise that mod does it and the patch skips it (the log says so at start):
+
+[list]
+[*][b]Frozen bullets after a hit[/b] (the load crash after a long firefight): from [url=https://www.nexusmods.com/spacebourne2/mods/4]Hardcore Tactical Realism[/url].
+[*][b]Companions' bullets that did nothing[/b] (they lived 0 s): from Hardcore Tactical Realism.
+[*][b]Squad runs and sprints to keep up[/b] instead of walking and teleporting: from Hardcore Tactical Realism.
+[*][b]HUD spare-ammo count after a pickup:[/b] from Ammo Discipline.
+[/list]
+
+[line]
+[size=5][b]Works with the set[/b][/size]
+
+At start the patch reads Mods\mods.txt and the owner mods' versions and settings. It publishes what it does in the shared variable SB2R_GameFixes, so a later version of another mod can hand a fix over. Nothing is fixed twice.
+
+[line]
+[size=5][b]Install[/b][/size]
+
+Copy the UnofficialPatch folder to SB2\Binaries\Win64\Mods\ (it needs [url=https://github.com/UE4SS-RE/RE-UE4SS]UE4SS[/url] 3.0.1 installed, as the other mods of the set) or use the realism installer. It starts with the game.
+
+[line]
+[size=5][b]Settings[/b][/size]
+
+Mods\UnofficialPatch\scripts\config.lua (Notepad, restart the game): every fix on/off, the squad reaction times, how long a stuck enemy waits, how far an ally may be before it is brought along. Debug = { Log = true } writes UnofficialPatch\unofficialpatch.log.
+
+[line]
+[size=5][b]Not fixed (yet)[/b][/size]
+
+[list]
+[*]NPC groups far from you stay idle: the game's AI is built around your position. Under study.
+[/list]
+
+[line]
+[size=5][b]Notes[/b][/size]
+
+Everything the patch touches is named in scripts/up/gamedefs.lua: after a game update, that is the file to check. The patch runs all its timed work on the game thread and never uses UE4SS's background loops (LoopAsync, ExecuteWithDelay), like the rest of the set.
+
+MIT licence, see [url=https://github.com/hubertdungen/SpaceBourne2-UnofficialPatch/blob/main/LICENSE]LICENSE[/url].

@@ -44,8 +44,23 @@ function S.hold(a, secs)
     s.holdUntil = math.max(s.holdUntil or 0, os.clock() + (secs or 1.5))
 end
 
+-- Never inside the "created" event itself: the projectile plugin is still setting the round up
+-- there, and ending it then crashed the game (access violation, test launch 1). The round is ended
+-- at the next game-thread pump instead (a frame later, about 1-2 m into its flight).
+local pending, flushing = {}, false
+local function flush()
+    flushing = false
+    local list = pending
+    pending = {}
+    for _, proj in ipairs(list) do
+        if U.valid(proj) then pcall(function() proj:Destroy() end) end
+    end
+end
 local function destroy(proj)
-    return (pcall(function() proj:Destroy() end))
+    if #pending >= 200 then return false end
+    pending[#pending + 1] = proj
+    if not flushing then flushing = true; GT.after(0, flush) end
+    return true
 end
 
 local function vec(p)
@@ -112,6 +127,7 @@ function S.onSoldierShot(self, projP, attachP, locP, dirP)
             if destroy(proj) then S.removed = S.removed + 1 end
             if not s.refire then
                 s.refire = true
+                U.log(string.format("squad soldier %s: new target %s, holds fire %.2f s", tostring(a), tostring(U.className(tgt)), react))
                 GT.after(react - (now - s.acq) + 0.05, function() refire(sol, a, ta) end)
             end
             return
