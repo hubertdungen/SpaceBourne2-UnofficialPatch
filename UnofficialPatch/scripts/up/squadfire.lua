@@ -109,8 +109,19 @@ local function dormant(tgt)
         local ok, act = pcall(function() return eye:IsActive() end)
         if ok and act == false then return true, "eyes off" end
     end
-    local b = S.born[U.addr(tgt) or 0]
-    if S.bornCount > 0 and b and os.clock() - b < cfg().SpawnGrace then return true, "just spawned" end
+    -- Age: from the shooter think hook (1 s timer, starts at its BeginPlay) or, if that has not seen it
+    -- yet, from the first time an ally considers it as a target.
+    local ta = U.addr(tgt)
+    local born = ta and S.born[ta]
+    if ta and not born then
+        S.noteBorn(tgt)
+        born = S.born[ta]
+    end
+    local age = born and (os.clock() - born) or 0
+    -- A boss spawns through the dungeon's boss trigger, which plays its GroundSlam intro at once; nothing
+    -- marks the intro except Ready? (above) and its age.
+    if U.get(tgt, P.Boss, false) == true and age < cfg().BossGrace then return true, "boss intro" end
+    if age < cfg().SpawnGrace then return true, "just spawned" end
     return false
 end
 

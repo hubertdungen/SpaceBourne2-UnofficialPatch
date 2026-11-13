@@ -63,7 +63,7 @@ G.P = {
     AIType = "AIType", Dead = "NPCDead", Ready = "Ready?", Injured = "InInjuredMode", HP = "CurrentHP", MaxHP = "MaxHP",
     Deaf = "AttackPlayerWhenSpawn",     -- true: CheckForFirstFocus (every alert, every hit) does nothing
     MoveActor = "TacticleMoveActor",    -- the spot a TacticleMove walks to with the eyes off
-    EyeSight = "XVisionEye", EyeRifle = "RifleEye", IsCompanion = "IsCompanian", CivilCompanion = "CivilCompanian?",
+    Boss = "IsBoss", EyeSight = "XVisionEye", EyeRifle = "RifleEye", IsCompanion = "IsCompanian", CivilCompanion = "CivilCompanian?",
     ShootTarget = "ShooTarget", LastDetected = "LastDetectedActor", ProjLife = "In Projectile Life Time",
     -- squad soldiers (Master_Soldier)
     Side = "AI_Type", Target = "C_Target", Tier = "Tier", MainTimer = "MainTimer",

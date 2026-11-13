@@ -12,6 +12,7 @@ SpaceBourne 2 has bugs in its AI that have nothing to do with mods: allies appea
 
 [list]
 [*][b]Allies line up in the lift.[/b] The game puts each ally on one of two fixed points of the lift, at floor level and without checking anything: the third one gets no point, and they stand in each other, half in the floor or outside the cabin. After a lift ride or a new dungeon floor the patch puts every ally that follows you on a spot it checked first: a clear line from you, a floor at your height under it, free of anyone else, and inside the cabin while you are in one.
+[*][b]Allies are checked after every load.[/b] The game's own placing at a load can leave soldiers in or under the floor (seen on a test save: three of four squad soldiers, one 11 m below the level). A few seconds after each load the patch checks the squad and puts them next to you.
 [*][b]The catch-up teleport can't bury anyone.[/b] When a squad soldier is more than 30 m away the game drops it on a random point around you without looking at walls or floor. The patch checks each soldier after that (and after any jump of yours over 15 m): one in the floor, behind a wall or outside the lift is moved to a checked spot next to you.
 [*][b]Allies that just arrived hold fire for a moment[/b] (1.5 s), so they don't shoot the instant they appear.
 [/list]
@@ -26,7 +27,7 @@ SpaceBourne 2 has bugs in its AI that have nothing to do with mods: allies appea
 
 [list]
 [*][b]Reaction time for the squad.[/b] A squad soldier picks a target, aims and fires in one call. Now the first shot at a new target waits for a reaction time by tier (0.7 s for rookies down to 0.35 s for veterans), then the soldier fires with the game's own function.
-[*][b]Allies don't fire at enemies that aren't active yet.[/b] Allies "see" an enemy the moment it spawns, even before it is awake, and open fire. Rounds fired at a shooter that is blind (eyes off, as lift spawns are), not ready, or spawned less than 1.5 s ago are removed, and the allies shoot once it is active.
+[*][b]Allies don't fire at enemies that aren't active yet.[/b] Allies "see" an enemy the moment it spawns, even before it is awake, and open fire. Rounds fired at a shooter that is blind (eyes off, as lift spawns are), not ready, or spawned less than 1.5 s ago are removed, and the allies shoot once it is active. A boss gets 5 s (its spawn intro) before allies may fire at it; without this a boss can die the moment it appears.
 [*][b]No shots through you.[/b] A round of a squad soldier or companion that would pass through you before it reaches its target is removed.
 [/list]
 

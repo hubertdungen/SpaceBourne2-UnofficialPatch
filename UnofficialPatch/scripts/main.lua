@@ -25,7 +25,7 @@ local defaults = {
         FriendlyFireGuard = true, DormantTargets = true, EndBulletsAfterHit = true, CompanionBullets = true, SquadKeepUp = true, AmmoHudRefresh = true },
     Allies = { CheckAfter = { 0.4, 1.5, 3.5 }, LeftBehind = 1500, HoldFireSeconds = 1.5 },
     LiftEnemies = { StuckSeconds = 3, MaxSeconds = 12 },
-    SquadFire = { ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, GuardRadius = 60, SpawnGrace = 1.5 },
+    SquadFire = { ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, GuardRadius = 60, SpawnGrace = 1.5, BossGrace = 5 },
     Imported = { RunBeyond = 600, SprintBeyond = 1500 },
     Debug = { Log = false },
 }
@@ -121,7 +121,14 @@ if fixes.AmmoHudRefresh then H.add(G.Fn.AddAmmo, I.onAddAmmo, "ammo pickup: HUD 
 -- Timed work on the game thread: the HUD draw on foot and in a ship, the ALS tick as a fallback.
 GT.drive(GT.HUD_TICK, "hud")
 GT.drive(GT.FOOT_TICK, "foot")
-GT.boot(function() L.reset() end)
+-- Every load or possession: the squad is checked once it has been registered (the game's own
+-- placing at a load can leave soldiers in or under the floor: seen with a loaded test save).
+GT.boot(function()
+    L.reset()
+    if fixes.LiftLineUp or fixes.SafeCatchUp then
+        for _, t in ipairs({ 4, 9, 16 }) do GT.after(t, function() L.check("level load", "squad", false) end) end
+    end
+end)
 GT.every(1.0, function(now) pcall(H.poll, now) end)
 if fixes.LiftLineUp then
     GT.every(0.25, function(now)

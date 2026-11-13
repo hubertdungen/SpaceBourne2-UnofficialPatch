@@ -39,6 +39,7 @@ return {
         ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, -- seconds, soldier tier 0 .. 4
         GuardRadius    = 60,  -- cm: a round passing closer than this to you is removed
         SpawnGrace     = 1.5, -- seconds after an enemy first shows up before allies may fire at it
+        BossGrace      = 5,   -- the same for a boss (its spawn intro): allies wait this long
     },
 
     Imported = { RunBeyond = 600, SprintBeyond = 1500 }, -- SquadKeepUp, cm (same as HTR)

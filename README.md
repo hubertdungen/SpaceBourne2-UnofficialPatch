@@ -21,6 +21,9 @@ works alone or with the rest of the realism set.
   other, half in the floor or outside the cabin. After a lift ride or a new dungeon floor the patch
   puts every ally that follows you on a spot it checked first: a clear line from you, a floor at
   your height under it, free of anyone else, and inside the cabin while you are in one.
+- **Allies are checked after every load.** The game's own placing at a load can leave soldiers in or under
+  the floor (seen on a test save: three of four squad soldiers, one 11 m below the level). A few seconds
+  after each load the patch checks the squad and puts them next to you.
 - **The catch-up teleport can't bury anyone.** When a squad soldier is more than 30 m away the game
   drops it on a random point around you without looking at walls or floor. The patch checks each
   soldier after that (and after any jump of yours over 15 m): one in the floor, behind a wall or
@@ -44,6 +47,7 @@ works alone or with the rest of the realism set.
 - **Allies don't fire at enemies that aren't active yet.** Allies "see" an enemy the moment it spawns,
   even before it is awake, and open fire. Rounds fired at a shooter that is blind (eyes off, as lift
   spawns are), not ready, or spawned less than 1.5 s ago are removed, and the allies shoot once it is active.
+  A boss gets 5 s (its spawn intro) before allies may fire at it; without this a boss can die the moment it appears.
 - **No shots through you.** A round of a squad soldier or companion that would pass through you
   before it reaches its target is removed.
 
