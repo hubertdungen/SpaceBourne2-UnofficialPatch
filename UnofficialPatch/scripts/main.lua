@@ -22,10 +22,10 @@ local U = require("up.util")
 local defaults = {
     Enabled = true,
     Fixes = { LiftLineUp = true, SafeCatchUp = true, ArrivalHoldFire = true, WakeLiftEnemies = true, SquadReaction = true,
-        FriendlyFireGuard = true, EndBulletsAfterHit = true, CompanionBullets = true, SquadKeepUp = true, AmmoHudRefresh = true },
+        FriendlyFireGuard = true, DormantTargets = true, EndBulletsAfterHit = true, CompanionBullets = true, SquadKeepUp = true, AmmoHudRefresh = true },
     Allies = { CheckAfter = { 0.4, 1.5, 3.5 }, LeftBehind = 1500, HoldFireSeconds = 1.5 },
     LiftEnemies = { StuckSeconds = 3, MaxSeconds = 12 },
-    SquadFire = { ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, GuardRadius = 60 },
+    SquadFire = { ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, GuardRadius = 60, SpawnGrace = 1.5 },
     Imported = { RunBeyond = 600, SprintBeyond = 1500 },
     Debug = { Log = false },
 }
@@ -94,21 +94,22 @@ if allies or fixes.SquadKeepUp then
     H.add(G.Fn.SoldierWalk, walk, "squad: follow")
     H.add(G.Fn.SoldierWalkOrd, walk, "squad: follow (orders)")
 end
-if fixes.SquadReaction or fixes.FriendlyFireGuard or fixes.ArrivalHoldFire then
+if fixes.SquadReaction or fixes.FriendlyFireGuard or fixes.ArrivalHoldFire or fixes.DormantTargets then
     H.add(G.Fn.SoldierShot, S.onSoldierShot, "squad: rounds")
     H.add(G.Soldier .. ":PistolShot", S.onPistol, "squad: pistol")
     H.add(G.Soldier .. ":BattleShoot", S.onRifle, "squad: rifle")
 end
-if fixes.FriendlyFireGuard or fixes.ArrivalHoldFire then
+if fixes.FriendlyFireGuard or fixes.ArrivalHoldFire or fixes.DormantTargets then
     for i, path in ipairs(G.Fn.ShooterShots) do H.add(path, S.onShooterShot, "companion rounds " .. i) end
 end
-if fixes.WakeLiftEnemies or fixes.CompanionBullets or allies then
+if fixes.WakeLiftEnemies or fixes.CompanionBullets or allies or fixes.DormantTargets then
     H.add(G.Fn.Think, function(self)
         local npc = U.param(self)
         if not U.valid(npc) then return end
         if fixes.WakeLiftEnemies then W.onThink(npc, os.clock()) end
         if fixes.CompanionBullets then I.companionBullets(npc) end
         if allies then L.noteShooter(npc) end
+        if fixes.DormantTargets then S.noteBorn(npc) end
     end, "shooter think")
 end
 if fixes.EndBulletsAfterHit then
@@ -132,8 +133,8 @@ end
 local function report()
     local on, off = H.status()
     return string.format("hooks %d on / %d off; allies: %d checks, %d placed, %d no spot, %d traces; lift enemies woken %d; "
-        .. "squad rounds held %d, refired %d, guarded %d; bullets ended %d; companion bullets %d; HUD refresh %d; %s",
-        on, off, L.stats.checks, L.stats.placed, L.stats.failed, L.stats.traces, W.woken, S.removed, S.refired, S.guarded,
+        .. "squad rounds held %d (dormant targets %d), refired %d, guarded %d; bullets ended %d; companion bullets %d; HUD refresh %d; %s",
+        on, off, L.stats.checks, L.stats.placed, L.stats.failed, L.stats.traces, W.woken, S.removed, S.dormant or 0, S.refired, S.guarded,
         I.ended, I.companions, I.hud, GT.report())
 end
 UNOFFICIAL_PATCH.report = report

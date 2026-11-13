@@ -89,6 +89,31 @@ local function throughYou(o, dir, target)
     return math.sqrt(px * px + py * py) < cfg().GuardRadius and math.abs(pz) < U.halfHeight(player) + 20
 end
 
+-- Enemies that are not active yet: blind (eyes off: the lift-spawn state), not ready, or spawned
+-- less than SpawnGrace seconds ago. Allies "see" them the moment they appear and open fire; with
+-- DormantTargets the rounds fired at them are removed. Only shooters (AIType = enemy) count.
+S.born, S.bornCount = {}, 0
+function S.noteBorn(npc)
+    local a = U.addr(npc)
+    if not a or S.born[a] then return end
+    if S.bornCount > 600 then S.born, S.bornCount = {}, 0 end
+    S.born[a] = os.clock()
+    S.bornCount = S.bornCount + 1
+end
+local function dormant(tgt)
+    if not (fixOn("DormantTargets") and U.valid(tgt)) then return false end
+    if U.get(tgt, P.AIType, nil) ~= G.AIType.Enemy then return false end
+    if U.get(tgt, P.Ready, true) == false then return true, "not ready" end
+    local eye = U.get(tgt, P.EyeSight, nil)
+    if U.valid(eye) then
+        local ok, act = pcall(function() return eye:IsActive() end)
+        if ok and act == false then return true, "eyes off" end
+    end
+    local b = S.born[U.addr(tgt) or 0]
+    if S.bornCount > 0 and b and os.clock() - b < cfg().SpawnGrace then return true, "just spawned" end
+    return false
+end
+
 local function reactionOf(sol)
     local list = cfg().ReactionByTier
     local tier = math.floor(tonumber(U.get(sol, P.Tier, 0)) or 0)
@@ -118,6 +143,12 @@ function S.onSoldierShot(self, projP, attachP, locP, dirP)
     local ta = U.valid(tgt) and U.addr(tgt) or nil
     if now < (s.holdUntil or 0) then
         if destroy(proj) then S.removed = S.removed + 1 end
+        return
+    end
+    local dm, dwhy = dormant(tgt)
+    if dm then
+        if destroy(proj) then S.removed = S.removed + 1; S.dormant = (S.dormant or 0) + 1 end
+        if s.dormantLog ~= ta then s.dormantLog = ta; U.log("squad soldier: target not active (" .. dwhy .. "), no fire") end
         return
     end
     if fixOn("SquadReaction") and ta then
@@ -153,10 +184,14 @@ function S.onShooterShot(self, projP, attachP, locP, dirP)
         if destroy(proj) then S.removed = S.removed + 1 end
         return
     end
-    if not fixOn("FriendlyFireGuard") then return end
     local tgt
     pcall(function() tgt = npc[P.ShootTarget].DetectedActor end)
     if not U.valid(tgt) then tgt = U.get(npc, P.LastDetected, nil) end
+    if dormant(tgt) then
+        if destroy(proj) then S.removed = S.removed + 1; S.dormant = (S.dormant or 0) + 1 end
+        return
+    end
+    if not fixOn("FriendlyFireGuard") then return end
     if throughYou(vec(locP), vec(dirP), tgt) and destroy(proj) then S.guarded = S.guarded + 1 end
 end
 

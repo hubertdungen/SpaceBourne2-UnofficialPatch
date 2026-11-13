@@ -15,6 +15,7 @@ return {
         -- Squad fire
         SquadReaction     = true, -- squad soldiers take a reaction time before the first shot at a new target
         FriendlyFireGuard = true, -- squad and companion rounds that would go through you are removed
+        DormantTargets    = true, -- allies don't fire at enemies that are not active yet (blind, not ready, just spawned)
 
         -- Fixes other mods of the set already have. Applied only while that mod is off.
         EndBulletsAfterHit = true, -- frozen bullets after a hit (load crash after a long firefight); HTR has it
@@ -37,6 +38,7 @@ return {
     SquadFire = {
         ReactionByTier = { 0.7, 0.6, 0.5, 0.4, 0.35 }, -- seconds, soldier tier 0 .. 4
         GuardRadius    = 60,  -- cm: a round passing closer than this to you is removed
+        SpawnGrace     = 1.5, -- seconds after an enemy first shows up before allies may fire at it
     },
 
     Imported = { RunBeyond = 600, SprintBeyond = 1500 }, -- SquadKeepUp, cm (same as HTR)
