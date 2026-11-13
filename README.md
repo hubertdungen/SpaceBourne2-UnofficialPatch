@@ -1,3 +1,5 @@
+![Unofficial Patch](docs/banner.png)
+
 # Unofficial Patch — fixes for SpaceBourne 2's own bugs
 
 SpaceBourne 2 has bugs in its AI that have nothing to do with mods: allies appear half under the
