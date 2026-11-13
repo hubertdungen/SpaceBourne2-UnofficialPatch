@@ -10,5 +10,6 @@ First release.
 - Enemies that came out of a lift blind and deaf and never got their senses back start fighting.
 - Squad soldiers take a reaction time (by tier) before the first shot at a new target; rounds that
   would pass through you are removed.
+- Allies (squad and companions) no longer fire at enemies that are not active yet: blind, not ready or just spawned.
 - Imported, only while the owner is off: frozen bullets after a hit, companions' 0 s bullets, squad keep-up (HTR),
   HUD spare-ammo count after a pickup (Ammo Discipline).

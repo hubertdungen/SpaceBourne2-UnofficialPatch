@@ -41,6 +41,9 @@ works alone or with the rest of the realism set.
 - **Reaction time for the squad.** A squad soldier picks a target, aims and fires in one call.
   Now the first shot at a new target waits for a reaction time by tier (0.7 s for rookies down to
   0.35 s for veterans), then the soldier fires with the game's own function.
+- **Allies don't fire at enemies that aren't active yet.** Allies "see" an enemy the moment it spawns,
+  even before it is awake, and open fire. Rounds fired at a shooter that is blind (eyes off, as lift
+  spawns are), not ready, or spawned less than 1.5 s ago are removed, and the allies shoot once it is active.
 - **No shots through you.** A round of a squad soldier or companion that would pass through you
   before it reaches its target is removed.
 
