@@ -99,3 +99,6 @@ file to check. The patch runs all its timed work on the game thread and never us
 background loops (`LoopAsync`, `ExecuteWithDelay`), like the rest of the set.
 
 MIT licence, see [LICENSE](LICENSE).
+
+
+<p align="center"><a href="https://dlforge.dungenlabs.com"><img src="docs/branding/dlforge-logo.svg" alt="DL Forge" width="120"></a><br><a href="https://dlforge.dungenlabs.com">DL Forge</a></p>
