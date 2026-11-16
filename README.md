@@ -47,8 +47,10 @@ works alone or with the rest of the realism set.
   Now the first shot at a new target waits for a reaction time by tier (0.7 s for rookies down to
   0.35 s for veterans), then the soldier fires with the game's own function.
 - **Allies don't fire at enemies that aren't active yet.** Allies "see" an enemy the moment it spawns,
-  even before it is awake, and open fire. Rounds fired at a shooter that is blind (eyes off, as lift
-  spawns are), not ready, or spawned less than 1.5 s ago are removed, and the allies shoot once it is active.
+  even before it is awake, and open fire. Rounds fired at a shooter that is not ready, or that
+  showed up less than 1.5 s ago, are removed, and the allies shoot once it is active. Blind (eyes off) alone does not count
+  (0.1.0 counted it, and with Silent Ops, which blinds every enemy that has not noticed anyone, the squad's rounds never
+  reached them).
   A boss gets 5 s (its spawn intro) before allies may fire at it; without this a boss can die the moment it appears.
 - **No shots through you.** A round of a squad soldier or companion that would pass through you
   before it reaches its target is removed.
@@ -69,6 +71,10 @@ patch skips it (the log says so at start):
 At start the patch reads `Mods\mods.txt` and the owner mods' versions and settings. It publishes
 what it does in the shared variable `SB2R_GameFixes`, so a later version of another mod can hand a
 fix over. Nothing is fixed twice.
+
+**Silent Ops:** use 0.1.1 or later. 0.1.0 counted "eyes off" as "not active yet", and Silent Ops switches the eyes of
+every enemy that has not noticed anyone off, so the squad's rounds at them were removed for good. (Workaround on 0.1.0:
+`DormantTargets = false`.)
 
 ## Install
 

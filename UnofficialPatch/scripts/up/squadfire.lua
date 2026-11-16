@@ -100,14 +100,32 @@ function S.noteBorn(npc)
     S.born[a] = os.clock()
     S.bornCount = S.bornCount + 1
 end
+S.dormant, S.dormantBy = 0, {}
+function S.dormantText()
+    local parts = {}
+    for why, n in pairs(S.dormantBy) do parts[#parts + 1] = why .. " " .. n end
+    table.sort(parts)
+    return #parts > 0 and table.concat(parts, ", ") or "-"
+end
+function S.noteDormant(why)
+    S.dormant = S.dormant + 1
+    why = why or "?"
+    S.dormantBy[why] = (S.dormantBy[why] or 0) + 1
+end
 local function dormant(tgt)
     if not (fixOn("DormantTargets") and U.valid(tgt)) then return false end
     if U.get(tgt, P.AIType, nil) ~= G.AIType.Enemy then return false end
     if U.get(tgt, P.Ready, true) == false then return true, "not ready" end
-    local eye = U.get(tgt, P.EyeSight, nil)
-    if U.valid(eye) then
-        local ok, act = pcall(function() return eye:IsActive() end)
-        if ok and act == false then return true, "eyes off" end
+    -- Eyes off alone does NOT make a target dormant (0.1.0 did, and it was wrong: Silent Ops switches the
+    -- eyes of every enemy that has not noticed anyone yet off, so the squad's rounds at it were all removed,
+    -- it never noticed anyone and its eyes never came back). A target is dormant only while it is new (age
+    -- below) or not ready. S.legacyEyes is for tests only (debug command "legacy"): the 0.1.0 rule.
+    if S.legacyEyes then
+        local eye = U.get(tgt, P.EyeSight, nil)
+        if U.valid(eye) then
+            local ok, act = pcall(function() return eye:IsActive() end)
+            if ok and act == false then return true, "eyes off" end
+        end
     end
     -- Age: from the shooter think hook (1 s timer, starts at its BeginPlay) or, if that has not seen it
     -- yet, from the first time an ally considers it as a target.
@@ -158,7 +176,7 @@ function S.onSoldierShot(self, projP, attachP, locP, dirP)
     end
     local dm, dwhy = dormant(tgt)
     if dm then
-        if destroy(proj) then S.removed = S.removed + 1; S.dormant = (S.dormant or 0) + 1 end
+        if destroy(proj) then S.removed = S.removed + 1; S.noteDormant(dwhy) end
         if s.dormantLog ~= ta then s.dormantLog = ta; U.log("squad soldier: target not active (" .. dwhy .. "), no fire") end
         return
     end
@@ -198,8 +216,9 @@ function S.onShooterShot(self, projP, attachP, locP, dirP)
     local tgt
     pcall(function() tgt = npc[P.ShootTarget].DetectedActor end)
     if not U.valid(tgt) then tgt = U.get(npc, P.LastDetected, nil) end
-    if dormant(tgt) then
-        if destroy(proj) then S.removed = S.removed + 1; S.dormant = (S.dormant or 0) + 1 end
+    local dm2, dwhy2 = dormant(tgt)
+    if dm2 then
+        if destroy(proj) then S.removed = S.removed + 1; S.noteDormant(dwhy2) end
         return
     end
     if not fixOn("FriendlyFireGuard") then return end

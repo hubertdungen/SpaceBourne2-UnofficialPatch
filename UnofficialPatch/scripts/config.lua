@@ -15,7 +15,7 @@ return {
         -- Squad fire
         SquadReaction     = true, -- squad soldiers take a reaction time before the first shot at a new target
         FriendlyFireGuard = true, -- squad and companion rounds that would go through you are removed
-        DormantTargets    = true, -- allies don't fire at enemies that are not active yet (blind, not ready, just spawned)
+        DormantTargets    = true, -- allies don't fire at enemies that are not active yet (not ready, just spawned)
 
         -- Fixes other mods of the set already have. Applied only while that mod is off.
         EndBulletsAfterHit = true, -- frozen bullets after a hit (load crash after a long firefight); HTR has it

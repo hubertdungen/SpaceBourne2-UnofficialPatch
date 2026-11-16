@@ -14,7 +14,7 @@
     up/gametick.lua     timed work on the game thread (shared with the set; no LoopAsync)
 ]]
 
-local VERSION = "0.1.0"
+local VERSION = "0.1.1"
 
 local U = require("up.util")
 
@@ -140,15 +140,15 @@ end
 local function report()
     local on, off = H.status()
     return string.format("hooks %d on / %d off; allies: %d checks, %d placed, %d no spot, %d traces; lift enemies woken %d; "
-        .. "squad rounds held %d (dormant targets %d), refired %d, guarded %d; bullets ended %d; companion bullets %d; HUD refresh %d; %s",
-        on, off, L.stats.checks, L.stats.placed, L.stats.failed, L.stats.traces, W.woken, S.removed, S.dormant or 0, S.refired, S.guarded,
+        .. "squad rounds held %d (dormant targets %d: %s), refired %d, guarded %d; bullets ended %d; companion bullets %d; HUD refresh %d; %s",
+        on, off, L.stats.checks, L.stats.placed, L.stats.failed, L.stats.traces, W.woken, S.removed, S.dormant or 0, S.dormantText(), S.refired, S.guarded,
         I.ended, I.companions, I.hud, GT.report())
 end
 UNOFFICIAL_PATCH.report = report
 if U.Verbose then GT.every(60, function() U.log(report()); U.log("slowest hooks: " .. H.profile()) end, 60) end
 
 -- Tests only (Debug.Commands = true): one word in UnofficialPatch\debug_cmd.txt, read once a second.
---   report | check | off <Fix> | on <Fix>
+--   report | check | off <Fix> | on <Fix> | legacy | modern  (legacy = the 0.1.0 "eyes off" rule, to compare)
 if cfg.Debug.Commands then
     GT.every(1.0, function()
         local f = io.open(U.Dir .. "debug_cmd.txt", "r")
@@ -159,6 +159,9 @@ if cfg.Debug.Commands then
         local word, arg = cmd:match("^%s*(%a+)%s*(%w*)")
         if word == "report" then U.warn(report())
         elseif word == "check" then L.check("debug", "all", false)
+        elseif word == "legacy" or word == "modern" then
+            S.legacyEyes = (word == "legacy") or nil
+            U.warn("debug: dormant rule " .. word .. " (rounds removed so far: " .. S.removed .. ", dormant " .. S.dormantText() .. ")")
         elseif (word == "off" or word == "on") and cfg.Fixes[arg] ~= nil then
             fixes[arg] = (word == "on") or nil
             U.warn("debug: " .. arg .. " " .. word)
