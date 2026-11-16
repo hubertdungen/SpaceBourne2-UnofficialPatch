@@ -101,4 +101,4 @@ background loops (`LoopAsync`, `ExecuteWithDelay`), like the rest of the set.
 MIT licence, see [LICENSE](LICENSE).
 
 
-<p align="center"><a href="https://dlforge.dungenlabs.com"><img src="docs/branding/dlforge-logo.svg" alt="DL Forge" width="120"></a><br><a href="https://dlforge.dungenlabs.com">DL Forge</a></p>
+<p align="center"><a href="https://dlforge.dungenlabs.com"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/branding/dlforge-logo-negative.svg"><source media="(prefers-color-scheme: light)" srcset="docs/branding/dlforge-logo.svg"><img src="docs/branding/dlforge-logo.svg" alt="DL Forge" width="120"></picture></a><br><a href="https://dlforge.dungenlabs.com">DL Forge</a></p>
